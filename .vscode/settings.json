@@ -1,0 +1,5 @@
+{
+    "code-runner.executorMap": {
+    "cpp": "$oldPath = $env:PATH; try {cd $dir; if ($?) {$env:PATH = \"$oldPath;D:\\w64devkit\\bin;D:\\allegro\\bin\"}; if ($?) {$source = Get-ChildItem -Filter '*.cpp' -File | Select-Object -ExpandProperty FullName}; if ($?) {g++ $source -o program.exe -I D:\\allegro\\include -L D:\\allegro\\lib -lallegro -lallegro_primitives -lallegro_image -lallegro_color -lallegro_font -lallegro_ttf -lallegro_audio -lallegro_acodec -lallegro_video -lallegro_dialog -lallegro_physfs -lallegro_memfile}; if ($?) {.\\program.exe}} finally {$env:PATH = $oldPath}"
+    }
+}
