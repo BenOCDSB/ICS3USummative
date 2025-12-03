@@ -1,4 +1,5 @@
-//main cpp
+/*allegro wiki
+https://github.com/liballeg/allegro_wiki/wiki/Allegro-Vivace*/
 
 #include "header.hpp"
 
@@ -9,7 +10,7 @@ int main()
 
     ALLEGRO_TIMER* timer = al_create_timer(1.0 / 30.0);
     ALLEGRO_EVENT_QUEUE* queue = al_create_event_queue();
-    ALLEGRO_DISPLAY* disp = al_create_display(320, 200);
+    ALLEGRO_DISPLAY* disp = al_create_display(1080, 720);
     ALLEGRO_FONT* font = al_create_builtin_font();
 
     al_register_event_source(queue, al_get_keyboard_event_source());
@@ -31,8 +32,8 @@ int main()
 
         if(redraw && al_is_event_queue_empty(queue))
         {
-            al_clear_to_color(al_map_rgb(0, 0, 0));
-            al_draw_text(font, al_map_rgb(255, 255, 255), 0, 0, 0, "Hello world!");
+            al_clear_to_color(al_map_rgb(120, 200, 50));
+            al_draw_text(font, al_map_rgb(100, 0, 255), 000, 0, 0, "DU DU DU DU Max Verstappen!");
             al_flip_display();
 
             redraw = false;
@@ -49,4 +50,3 @@ int main()
 
 
 //Branch Ben_0.1
-//test new branch
