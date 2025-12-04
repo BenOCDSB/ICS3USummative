@@ -6,6 +6,7 @@ https://github.com/liballeg/allegro_wiki/wiki/Allegro-Vivace*/
 
 #define SLATEGREY   al_map_rgb(112,128,144)
 
+const float FPS = 60;
 const int SCREEN_W = 640;
 const int SCREEN_H = 480;
 
@@ -13,6 +14,7 @@ int main(int argc, char *argv[])
 {
     ALLEGRO_DISPLAY *display = nullptr;
 	ALLEGRO_EVENT_QUEUE *event_queue = nullptr;
+    ALLEGRO_TIMER *timer = nullptr;
 
     //initialize allegro
     al_init();
@@ -25,19 +27,27 @@ int main(int argc, char *argv[])
        	return -1;
 	}
 
-    // Initialize keyboard routines
+    //initialize keyboard routines
 	if (!al_install_keyboard()) {
 	    al_show_native_message_box(display, "Error", "Error", "failed to initialize the keyboard!",
                                  nullptr, ALLEGRO_MESSAGEBOX_ERROR);
       	return -1;
    	}
 
-    // need to add image processor
+    //add image processor
  	if (!al_init_image_addon()) {
     	al_show_native_message_box(display, "Error", "Error",
     		"Failed to initialize al_init_image_addon!",nullptr, ALLEGRO_MESSAGEBOX_ERROR);
     	return 0;
 	}
+
+    //create timer
+    timer = al_create_timer(1.0 / FPS);
+   	if (!timer) {
+   		al_show_native_message_box(display, "Error", "Error", "Failed to create timer!",
+                                 nullptr, ALLEGRO_MESSAGEBOX_ERROR);
+        return -1;
+    }
 
     // set up event queue
 	event_queue = al_create_event_queue();
@@ -51,20 +61,22 @@ int main(int argc, char *argv[])
     //register events for event queue
     al_register_event_source(event_queue, al_get_keyboard_event_source());
     al_register_event_source(event_queue, al_get_display_event_source(display));
-    
-    bool done = false;
-    bool redraw = true;
-    ALLEGRO_EVENT event;
+    al_register_event_source(event_queue, al_get_timer_event_source(timer));
 
     ALLEGRO_BITMAP* mysha = nullptr;
     mysha = al_load_bitmap("mysha.png");
 
-    int dx = 100;
-	int dy = 100;
+    int dx = 0;
+	int dy = 0;
+    int posx = 100;
+	int posy = 100;
 	al_clear_to_color(SLATEGREY);
-	al_draw_bitmap(mysha, dx, dy, 0);
+	al_draw_bitmap(mysha, posx, posy, 0);
 	al_flip_display();
 	bool doexit = false;
+
+    al_start_timer(timer);
+    
 	while (!doexit) {
 
     	ALLEGRO_EVENT ev;
@@ -91,6 +103,12 @@ int main(int argc, char *argv[])
                		doexit = true;
                		break;
          	}
+        }
+            
+            else if (ev.type == ALLEGRO_EVENT_TIMER) {
+            posx += dx;
+            posy += dy;
+
          	al_clear_to_color(SLATEGREY);
 		 	al_draw_bitmap(mysha, dx, dy, 0);
 		 	al_flip_display();
