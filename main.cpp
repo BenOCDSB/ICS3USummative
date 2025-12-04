@@ -4,106 +4,101 @@ https://github.com/liballeg/allegro_wiki/wiki/Allegro-Vivace*/
 
 #include "header.hpp"
 
-int main()
+#define SLATEGREY   al_map_rgb(112,128,144)
+
+const int SCREEN_W = 640;
+const int SCREEN_H = 480;
+
+int main(int argc, char *argv[])
 {
-    if(!al_init())
-    {
-        printf("couldn't initialize allegro\n");
-        return 1;
-    }
+    ALLEGRO_DISPLAY *display = nullptr;
+	ALLEGRO_EVENT_QUEUE *event_queue = nullptr;
 
-    if(!al_install_keyboard())
-    {
-        printf("couldn't initialize keyboard\n");
-        return 1;
-    }
+    //initialize allegro
+    al_init();
 
-    ALLEGRO_TIMER* timer = al_create_timer(1.0 / 30.0);
-    if(!timer)
-    {
-        printf("couldn't initialize timer\n");
-        return 1;
-    }
+    //initialize display
+    display = al_create_display(SCREEN_W, SCREEN_H);
+	if (!display) {
+    	al_show_native_message_box(display, "Error", "Error", "Failed to initialize display!",
+                                 nullptr, ALLEGRO_MESSAGEBOX_ERROR);
+       	return -1;
+	}
 
-    ALLEGRO_EVENT_QUEUE* queue = al_create_event_queue();
-    if(!queue)
-    {
-        printf("couldn't initialize queue\n");
-        return 1;
-    }
+    // Initialize keyboard routines
+	if (!al_install_keyboard()) {
+	    al_show_native_message_box(display, "Error", "Error", "failed to initialize the keyboard!",
+                                 nullptr, ALLEGRO_MESSAGEBOX_ERROR);
+      	return -1;
+   	}
 
-    ALLEGRO_DISPLAY* disp = al_create_display(640, 480);
-    if(!disp)
-    {
-        printf("couldn't initialize display\n");
-        return 1;
-    }
+    // need to add image processor
+ 	if (!al_init_image_addon()) {
+    	al_show_native_message_box(display, "Error", "Error",
+    		"Failed to initialize al_init_image_addon!",nullptr, ALLEGRO_MESSAGEBOX_ERROR);
+    	return 0;
+	}
 
-    ALLEGRO_FONT* font = al_create_builtin_font();
-    if(!font)
-    {
-        printf("couldn't initialize font\n");
-        return 1;
-    }
+    // set up event queue
+	event_queue = al_create_event_queue();
+	if (!event_queue) {
+		al_show_native_message_box(display, "Error", "Error", "Failed to create event_queue!",
+                                 nullptr, ALLEGRO_MESSAGEBOX_ERROR);
+		al_destroy_display(display);
+      	return -1;
+	}
 
-    al_register_event_source(queue, al_get_keyboard_event_source());
-    al_register_event_source(queue, al_get_display_event_source(disp));
-    al_register_event_source(queue, al_get_timer_event_source(timer));
-
+    //register events for event queue
+    al_register_event_source(event_queue, al_get_keyboard_event_source());
+    al_register_event_source(event_queue, al_get_display_event_source(display));
+    
     bool done = false;
     bool redraw = true;
     ALLEGRO_EVENT event;
 
-    if(!al_init_image_addon())
-    {
-    printf("couldn't initialize image addon\n");
-    return 1;
-    }
+    ALLEGRO_BITMAP* mysha = nullptr;
+    mysha = al_load_bitmap("mysha.png");
 
-    ALLEGRO_BITMAP* mysha = al_load_bitmap("mysha.png");
-    if (!mysha)
-    {
-        printf("Couldn't load mysha\n");
-        return 1;
-    }
+    int dx = 100;
+	int dy = 100;
+	al_clear_to_color(SLATEGREY);
+	al_draw_bitmap(mysha, dx, dy, 0);
+	al_flip_display();
+	bool doexit = false;
+	while (!doexit) {
 
-    al_start_timer(timer);
-    while(1)
-    {
-        al_wait_for_event(queue, &event);
-        
-        switch(event.type)
-        {
-            case ALLEGRO_EVENT_TIMER:
-                // game logic goes here.
-                redraw = true;
-                break;
+    	ALLEGRO_EVENT ev;
+      	al_wait_for_event(event_queue, &ev);
 
-            case ALLEGRO_EVENT_KEY_DOWN:
-            case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                done = true;
-                break;
-        }
+      	if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+        	doexit = true;
+      	}
+      	else if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
+         	switch(ev.keyboard.keycode) {
+            	case ALLEGRO_KEY_UP:
+               		dy -= 8;
+               		break;
+	            case ALLEGRO_KEY_DOWN:
+    		        dy += 8;
+            		break;
+            	case ALLEGRO_KEY_LEFT:
+               		dx -= 8;
+               		break;
+	            case ALLEGRO_KEY_RIGHT:
+               		dx += 8;
+               		break;
+               	case ALLEGRO_KEY_ESCAPE:
+               		doexit = true;
+               		break;
+         	}
+         	al_clear_to_color(SLATEGREY);
+		 	al_draw_bitmap(mysha, dx, dy, 0);
+		 	al_flip_display();
+		}
+	}
 
-        if(done)
-            break;
-
-        if(redraw && al_is_event_queue_empty(queue))
-        {
-            al_clear_to_color(al_map_rgb(120, 200, 50));
-            al_draw_text(font, al_map_rgb(100, 0, 255), 0, 0, 0, "DU DU DU DU Max Verstappen!");
-            al_draw_bitmap(mysha, 0, 0, 0);
-            
-            al_flip_display();
-
-            redraw = false;
-        }
-    }
-
-    al_destroy_font(font);
-    al_destroy_display(disp);
-    al_destroy_timer(timer);
-    al_destroy_event_queue(queue);
+    al_destroy_display(display);
+    al_destroy_event_queue(event_queue);
     al_destroy_bitmap(mysha);
 
     return 0;
