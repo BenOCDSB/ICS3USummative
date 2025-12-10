@@ -14,19 +14,6 @@ int main(int argc, char* argv[]){
         return 1;
     }
 
-    // // same size on all device...
-    // int fb_w = al_get_display_width(display);
-    // int fb_h = al_get_display_height(display);
-
-    // float sx = (float)fb_w / SCREEN_W;
-    // float sy = (float)fb_h / SCREEN_H;
-
-    // ALLEGRO_TRANSFORM t;
-    // al_identity_transform(&t);
-    // al_scale_transform(&t, sx, sy);
-    // al_use_transform(&t);
-    // // ...
-
 
     if (!(al_init_primitives_addon() &&
     al_install_keyboard() &&
@@ -46,7 +33,7 @@ int main(int argc, char* argv[]){
         return 1;
     }
 
-
+    //initialize timers and event queue
     ALLEGRO_TIMER* timer = al_create_timer(1.0 / FPS);
     ALLEGRO_TIMER* blizzard_timer = al_create_timer(BLIZZARD_DELAY);
     ALLEGRO_TIMER* secondTick = al_create_timer(1);
@@ -54,6 +41,7 @@ int main(int argc, char* argv[]){
     al_register_event_source(event_queue, al_get_keyboard_event_source());
     al_register_event_source(event_queue, al_get_timer_event_source(timer));
     al_register_event_source(event_queue, al_get_timer_event_source(blizzard_timer));
+    al_register_event_source(event_queue, al_get_timer_event_source(secondTick));
     al_register_event_source(event_queue, al_get_display_event_source(display));
     al_register_event_source(event_queue, al_get_mouse_event_source());
     ALLEGRO_KEYBOARD_STATE keystate;
@@ -138,7 +126,10 @@ int main(int argc, char* argv[]){
     
     double last_time = al_get_time();
 
+    int secondTickDelay = 0;
+
     al_start_timer(blizzard_timer);
+    al_start_timer(secondTick);
     al_start_timer(timer);
     while (run){
         ALLEGRO_EVENT events;
@@ -168,6 +159,7 @@ int main(int argc, char* argv[]){
                 active = true;
             delayTerrainChange++;
             cloudFrameCount++;
+            secondTickDelay++;
 
 
             al_get_keyboard_state(&keystate);
@@ -210,6 +202,10 @@ int main(int argc, char* argv[]){
                 }
             }
 
+            if (secondTickDelay > FPS) {
+                TimeRemaining--;
+                secondTickDelay = 0;
+            }
             cameraUpdate(cameraPosition,x,y,pSpriteX,pSpriteY);
             al_identity_transform(&camera);
             al_translate_transform(&camera,-cameraPosition[0],-cameraPosition[1]);
