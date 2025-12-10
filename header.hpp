@@ -13,9 +13,11 @@
 #ifdef __APPLE__
 const int SCREEN_W = 1080 * 2;
 const int SCREEN_H = 720 * 2;
+const int DEADZONE_FACTOR = 200 * 2;
 #else
 const int SCREEN_W = 1080;
 const int SCREEN_H = 720;
+const int DEADZONE_FACTOR = 200;
 #endif
 
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
@@ -42,8 +44,6 @@ float SCALE_SCREEN = 1;
 
 int MAP_WIDTH = SCREEN_W * 3;
 int MAP_HEIGHT = SCREEN_H * 3;
-
-const int DEADZONE_FACTOR = 200;
 
 const int DEADZONE_LEFT  = DEADZONE_FACTOR / SCALE_SCREEN;
 const int DEADZONE_RIGHT = (SCREEN_W - DEADZONE_FACTOR)  / SCALE_SCREEN;
