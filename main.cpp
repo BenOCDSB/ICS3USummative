@@ -436,5 +436,7 @@ void cameraUpdate(float* cameraPosition, int px, int py, int pWidth, int pHeight
 }
 
 void UpdateTimerString(char* timerString, int timeRemaining){
-    snprintf(timerString,15,"ddd%d",timeRemaining);
+    int min = timeRemaining / 60;
+    int secs = timeRemaining % 60;
+    snprintf(timerString,20,"00:%02d:%02d", min, secs);
 }
