@@ -1,21 +1,19 @@
 //Bendeguz Huszagh and Alavi Al Alindo
 #include "header.hpp"
 
-
 int main(int argc, char* argv[]){
     al_init();
         srand(time(0));
 
-
+    //create display, check if successful
     ALLEGRO_DISPLAY* display;
     display = al_create_display(SCREEN_W,SCREEN_H);
-
     if(!display){
         printf("display could not be created");
         return 1;
     }
 
-
+    //initialize addons, check for success
     if (!(al_init_primitives_addon() &&
     al_install_keyboard() &&
     al_install_mouse() &&
@@ -26,9 +24,9 @@ int main(int argc, char* argv[]){
         return 1;
     };
 
-
+    //choose font for timer, check for success
     ALLEGRO_FONT* timerCountFont = al_load_font("assets/fonts/Anta-Regular.ttf", 50, 0);
-    
+
     if(!timerCountFont){
         printf("failed to load font");
         return 1;
@@ -47,7 +45,7 @@ int main(int argc, char* argv[]){
     al_register_event_source(event_queue, al_get_mouse_event_source());
     ALLEGRO_KEYBOARD_STATE keystate;
 
-
+    //load map tiles
     ALLEGRO_BITMAP* snowTiles[6] = {al_load_bitmap("assets/images/snowTiles/Snow_0.png"),
                                     al_load_bitmap("assets/images/snowTiles/Snow_1.png"),
                                     al_load_bitmap("assets/images/snowTiles/Snow_2.png"),
@@ -62,10 +60,12 @@ int main(int argc, char* argv[]){
         }
     }
 
+    //calculate number of tiles needed
     int numCols = MAP_WIDTH / al_get_bitmap_width(snowTiles[0]) + 5;
     int numRows = MAP_HEIGHT / al_get_bitmap_height(snowTiles[0]) + 5;
     int totalTiles = numCols * numRows;
 
+    //initialize timer
     int TimeRemaining = 100;
     char TimerString[15];
 
@@ -145,14 +145,14 @@ int main(int argc, char* argv[]){
         //     x = events.mouse.x;
         //     y = events.mouse.y;
         // }
-        else if(events.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN){
-            if(events.mouse.button & 1){
-                ccc = color1;
-            }
-            if(events.mouse.button & 2){
-                ccc = color2;
-            }
-        }
+        // else if(events.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN){
+        //     if(events.mouse.button & 1){
+        //         ccc = color1;
+        //     }
+        //     if(events.mouse.button & 2){
+        //         ccc = color2;
+        //     }
+        // }
 
 
         else if(events.type == ALLEGRO_EVENT_TIMER){
