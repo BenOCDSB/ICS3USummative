@@ -162,7 +162,7 @@ int main(int argc, char* argv[]){
             cloudFrameCount++;
             secondTickDelay++;
 
-
+            //player movement
             al_get_keyboard_state(&keystate);
             if(al_key_down(&keystate,ALLEGRO_KEY_UP)){
                 y -= SPEED;
