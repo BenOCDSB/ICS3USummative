@@ -67,15 +67,12 @@ const int BLIZZARD_DELAY = 5;
 const float pSpriteX = 240;
 const float pSpriteY = 240;
 
+//function prototypes
 void resetTerrain(int* tileIndexList, int requiredTiles, int numOfTiles);
 void createCloud(Cloud* cloudList, int* ind, int camX);
 void destroyCloud(Cloud* cloudList, int* ind, int camX);
-
 void createCollisionObject(CollisionObject* objList, int* currentIndex, ALLEGRO_BITMAP* image, int posX, int posY);
-
-
 bool collisionCheck(int px, int py, int ox, int oy, int pwidth, int pheight, int owidth, int oheight);
 bool collisionCheckRadius(int px, int py, int ox, int oy, int pradius, int oradius);
 void cameraUpdate(float* cameraPosition, int px, int py, int pWidth, int pHeight);
-
 void UpdateTimerString(char* timerString, int timeRemaining);

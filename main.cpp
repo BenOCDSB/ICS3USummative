@@ -81,6 +81,7 @@ int main(int argc, char* argv[]){
     int cloudFrameCount = 0;
     Cloud* cloudList = (Cloud*)malloc(sizeof(Cloud)*MAX_CLOUD_COUNT);
 
+    //load player model for direction of movement
     ALLEGRO_BITMAP* playerDown = al_load_bitmap("assets/images/Assassin/Spritesheets/Front - Walking.png");
     ALLEGRO_BITMAP* playerUp = al_load_bitmap("assets/images/Assassin/Spritesheets/Back - Walking.png");
     ALLEGRO_BITMAP* playerLeft = al_load_bitmap("assets/images/Assassin/Spritesheets/Left - Walking.png");
@@ -88,13 +89,9 @@ int main(int argc, char* argv[]){
     ALLEGRO_BITMAP* player;
 
     if(!(playerDown && playerUp && playerLeft && playerRight)){
-        printf("player images initialization failded");
+        printf("player images initialization failed");
         return 1;
     }
-
-    bool run = true;
-    bool draw = true;
-
 
     bool active = false;
     int aniX = 0;
@@ -103,13 +100,12 @@ int main(int argc, char* argv[]){
     int delayTerrainChange = TERRAIN_FRAME_DELAY_MAX;
 
     if(!player){
-        printf("plauer image error");
+        printf("player image error");
         return 1;
     }
 
     float x = 20;
     float y = 20;
-
 
     int px = 0;
     int qx = SCREEN_W;
@@ -129,6 +125,9 @@ int main(int argc, char* argv[]){
 
     int secondTickDelay = 0;
 
+    //start main game logic
+    bool run = true;
+    bool draw = true;
     al_start_timer(blizzard_timer);
     al_start_timer(secondTick);
     al_start_timer(timer);
@@ -207,12 +206,15 @@ int main(int argc, char* argv[]){
                 TimeRemaining--;
                 secondTickDelay = 0;
             }
+
+            //camera movement
             cameraUpdate(cameraPosition,x,y,pSpriteX,pSpriteY);
             al_identity_transform(&camera);
             al_translate_transform(&camera,-cameraPosition[0],-cameraPosition[1]);
             al_scale_transform(&camera,SCALE_SCREEN,SCALE_SCREEN);
             al_use_transform(&camera);
 
+            //collision check
             for(int i = 0; i < currentCollObjCount; i++){
                 if(collisionCheck(x,y,collObjs[i].PosX,collObjs[i].PosY,pSpriteX,pSpriteY,pSpriteX,pSpriteY)){
                     if(direction == UP){
@@ -230,7 +232,6 @@ int main(int argc, char* argv[]){
                 }
             }
         
-
 
             if(cloudFrameCount >= CLOUD_DELAY_FRAME){
                 if(currentCloudCount <= MAX_CLOUD_COUNT){
@@ -270,7 +271,7 @@ int main(int argc, char* argv[]){
             
         }
 
-
+        //draw map tiles
         if(draw){
             draw = false;
             al_clear_to_color(al_map_rgb(0,0,0));
@@ -310,6 +311,7 @@ int main(int argc, char* argv[]){
         }
     }
 
+    //destroy allegro components to free up memory
     al_destroy_display(display);
     al_destroy_timer(timer);
     al_destroy_bitmap(player);
